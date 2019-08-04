@@ -6,6 +6,7 @@ Wykorzystane moduły języka:
 - random
 - os
 
-Instrukcja Gry:
+# Instrukcja Gry:
+
 Zadaniem gracza będzie takie sterowanie helikopterem aby uniknąć zderzenia z górną lub dolną krawędzią jaskini.
 Gra się toczy do momentu zderzenia. Miłej zabawy :)
