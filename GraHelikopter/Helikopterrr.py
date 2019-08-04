@@ -1,20 +1,21 @@
 import pygame
 import os
 import random
+import math
 
 pygame.init()
 w = 600
 h = 600
 screen = pygame.display.set_mode((w,h))
 
-def write(text, size):
+def write(text,x, y, size):
     font = pygame.font.SysFont("Arial", size)
-    rend = font.render(text, 0, (255,100,100))
-    x = (w - rend.get_rect().width)/2
-    y = (h - rend.get_rect().height)/2
+    rend = font.render(text, 1, (255,100,100))
+    # x = (w - rend.get_rect().width)/2 Wyśrodkowanie napisu
+    # y = (h - rend.get_rect().height)/2
     screen.blit(rend, (x,y))
     
-_display = "menu"
+_display = "end"
 
 class Obstacle():
     def __init__(self, x, width):
@@ -22,7 +23,7 @@ class Obstacle():
         self.width = width
         self.y_up = 0
         self.height_up = random.randint(150,250)
-        self.space = 300
+        self.space = 250
         self.y_down = self.height_up + self.space
         self.height_down = h - self.y_down
         self.color = (160,140,190)
@@ -74,16 +75,17 @@ while True:
                 if _display != "play":
                     player = Helicopter(250,250)
                     dy = 0
-                    _display = "play"                    
+                    _display = "play"
+                    score = 0
     screen.fill((0,0,0))
     
     if _display == "menu":
-        write("Naciśnij spację, aby zacząć",40)
+        write("Naciśnij spację, aby zacząć", 80, 290, 40)
         logo = pygame.image.load(os.path.join('logo.png'))
         screen.blit(logo, (80,30))
     elif _display == "play":
         for o in obstacle:
-            o.move(0.5)
+            o.move(1)
             o.draw()
             if o.collision(game.form):
                 _display = "end"
@@ -91,11 +93,15 @@ while True:
             if o.x <= -o.width:
                 obstacle.remove(o)
                 obstacle.append(Obstacle(w, w/20))
+                score = score + math.fabs(dy)
         game.draw()
         game.move(dy)
+        write("Twój wynik: " + str(score), 50, 50, 20)
     elif _display == "end":
         logo = pygame.image.load(os.path.join('logo.png'))
         screen.blit(logo, (80,30))
-        write("Niestety przegrywasz", 50, 290, 20)
+        write("Niestety przegrywasz", 50, 450, 20)
+        write("Naciśnij spację, aby zagrać ponownie", 50, 500, 20)
+        write("Twój wynik to: ", 50, 550, 20)
         
     pygame.display.update()
