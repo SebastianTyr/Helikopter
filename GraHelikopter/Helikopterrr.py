@@ -11,11 +11,11 @@ screen = pygame.display.set_mode((w,h))
 def write(text,x, y, size):
     font = pygame.font.SysFont("Arial", size)
     rend = font.render(text, 1, (255,100,100))
-    # x = (w - rend.get_rect().width)/2 Wyśrodkowanie napisu
+    # x = (w - rend.get_rect().width)/2 --- Wyśrodkowanie napisu
     # y = (h - rend.get_rect().height)/2
     screen.blit(rend, (x,y))
     
-_display = "end"
+_display = "menu"
 
 class Obstacle():
     def __init__(self, x, width):
@@ -23,7 +23,7 @@ class Obstacle():
         self.width = width
         self.y_up = 0
         self.height_up = random.randint(150,250)
-        self.space = 250
+        self.space = 300
         self.y_down = self.height_up + self.space
         self.height_down = h - self.y_down
         self.color = (160,140,190)
@@ -53,13 +53,11 @@ class Helicopter():
     def draw(self):
         screen.blit(self.graph, (self.x, self.y))
     def move(self ,v):
+        self.form = pygame.Rect(self.x, self.y, self.width, self.height)
         self.y = self.y + v
 obstacle = []
 for i in range(21):
     obstacle.append(Obstacle(i*w/20, w/20))
-    
-game = Helicopter(250,250)
-dy = 0
 
 while True:
     for event in pygame.event.get():
@@ -68,12 +66,12 @@ while True:
             quit()
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
-                dy = -0.5
+                dy = -1
             elif event.key == pygame.K_DOWN:
-                dy = 0.5
+                dy = 1
             if event.key == pygame.K_SPACE:
                 if _display != "play":
-                    player = Helicopter(250,250)
+                    player = Helicopter(250,300)
                     dy = 0
                     _display = "play"
                     score = 0
@@ -87,21 +85,21 @@ while True:
         for o in obstacle:
             o.move(1)
             o.draw()
-            if o.collision(game.form):
+            if o.collision(player.form):
                 _display = "end"
         for o in obstacle:
             if o.x <= -o.width:
                 obstacle.remove(o)
                 obstacle.append(Obstacle(w, w/20))
                 score = score + math.fabs(dy)
-        game.draw()
-        game.move(dy)
+        player.draw()
+        player.move(dy)
         write("Twój wynik: " + str(score), 50, 50, 20)
     elif _display == "end":
         logo = pygame.image.load(os.path.join('logo.png'))
         screen.blit(logo, (80,30))
         write("Niestety przegrywasz", 50, 450, 20)
         write("Naciśnij spację, aby zagrać ponownie", 50, 500, 20)
-        write("Twój wynik to: ", 50, 550, 20)
+        write("Twój wynik to: " + str(score), 50, 550, 20)
         
     pygame.display.update()
